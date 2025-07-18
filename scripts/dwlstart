@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+DWL_FIFO="$XDG_RUNTIME_DIR/dwl_status_fifo"
+
+mkdir -p "$(dirname "$DWL_FIFO")"
+if [ ! -p "$DWL_FIFO" ]; then
+    mkfifo -m 600 "$DWL_FIFO"
+fi
+
+status > "$DWL_FIFO" 2>/dev/null &
+STATUS_PID=$!
+
+dwl < "$DWL_FIFO" &
+DWL_PID=$! 
+
+# 4. Wait for the Wayland socket to appear and set WAYLAND_DISPLAY manually.
+WAYLAND_SOCKET_FOUND=""
+for i in $(seq 1 10); do # Try for up to 10 seconds (10 * 1s waits)
+    # Find the actual Wayland socket file (e.g., wayland-0, wayland-1)
+    WAYLAND_SOCKET_PATH=$(find "$XDG_RUNTIME_DIR" -maxdepth 1 -type s -name "wayland-*" 2>/dev/null | head -n 1)
+    if [ -n "$WAYLAND_SOCKET_PATH" ]; then
+        WAYLAND_SOCKET_NAME=$(basename "$WAYLAND_SOCKET_PATH")
+        export WAYLAND_DISPLAY="$WAYLAND_SOCKET_NAME"
+        WAYLAND_SOCKET_FOUND="true"
+        echo "Found Wayland socket: $WAYLAND_DISPLAY"
+        break
+    fi
+    sleep 1 # Wait 1 second before retrying
+done
+
+if [ -z "$WAYLAND_SOCKET_FOUND" ]; then
+    echo "Error: Wayland socket not found after 10 seconds. Exiting." >&2
+    # You might want to gracefully exit or signal a failure here
+    kill "$STATUS_PID" 2>/dev/null
+    rm -f "$DWL_FIFO"
+    exit 1
+fi
+
+systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+
+dbus-update-activation-environment --systemd --all
+
+systemctl --user restart xdg-desktop-portal.service || true
+systemctl --user restart xdg-desktop-portal-wlr.service || true
+systemctl --user restart xdg-desktop-portal-gtk.service || true
+
+wait "$DWL_PID"
+
+echo "dwl exited. Cleaning up..."
+kill "$STATUS_PID" 2>/dev/null # Kill the background status script
+rm -f "$DWL_FIFO"              # Remove the named pipe
+
+exit 0

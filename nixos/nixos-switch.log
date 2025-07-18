@@ -1,0 +1,45 @@
+building Nix...
+building the system configuration...
+error:
+       … while calling the 'head' builtin
+         at /nix/store/fw0ra797qv90xhr2033xbjlxv0520zaw-nixos-25.05/nixos/lib/attrsets.nix:1534:13:
+         1533|           if length values == 1 || pred here (elemAt values 1) (head values) then
+         1534|             head values
+             |             ^
+         1535|           else
+
+       … while evaluating the attribute 'value'
+         at /nix/store/fw0ra797qv90xhr2033xbjlxv0520zaw-nixos-25.05/nixos/lib/modules.nix:1084:7:
+         1083|     // {
+         1084|       value = addErrorContext "while evaluating the option `${showOption loc}':" value;
+             |       ^
+         1085|       inherit (res.defsFinal') highestPrio;
+
+       … while evaluating the option `system.build.toplevel':
+
+       … while evaluating definitions from `/nix/store/fw0ra797qv90xhr2033xbjlxv0520zaw-nixos-25.05/nixos/nixos/modules/system/activation/top-level.nix':
+
+       … while evaluating the option `system.systemBuilderArgs':
+
+       … while evaluating definitions from `/nix/store/fw0ra797qv90xhr2033xbjlxv0520zaw-nixos-25.05/nixos/nixos/modules/system/activation/activatable-system.nix':
+
+       … while evaluating the option `system.activationScripts.etc.text':
+
+       … while evaluating definitions from `/nix/store/fw0ra797qv90xhr2033xbjlxv0520zaw-nixos-25.05/nixos/nixos/modules/system/etc/etc-activation.nix':
+
+       … while evaluating definitions from `/nix/store/fw0ra797qv90xhr2033xbjlxv0520zaw-nixos-25.05/nixos/nixos/modules/system/etc/etc.nix':
+
+       … while evaluating the option `environment.etc.dbus-1.source':
+
+       … while evaluating the option `environment.systemPackages':
+
+       … while evaluating definitions from `/home/cgf/.config/nixos/configuration.nix':
+
+       (stack trace truncated; use '--show-trace' to show the full, detailed trace)
+
+       error: attribute 'withPackages' missing
+       at /home/cgf/.config/nixos/configuration.nix:139:5:
+          138|     myCustomDwl
+          139|     qutebrowser.withPackages (pythonPackages: with pythonPackages; [
+             |     ^
+          140|       adblock

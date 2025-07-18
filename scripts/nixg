@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+pushd $(nix eval -f '<nixpkgs>' --raw $1)

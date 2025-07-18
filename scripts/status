@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+WIFI_INTERFACE="wls3"
+ETHERNET_INTERFACE="eth0"
+
+while true; do
+  datetime=$(date +'%Y-%m-%d %H:%M:%S')
+  
+  battery=$(acpi -b | head -n 1 | cut -d',' -f2-)
+  
+  if ip link show "$ETHERNET_INTERFACE" up &> /dev/null; then
+    internet="Ethernet"
+    rx=$(iw dev $ETHERNET_INTERFACE link | grep rx | awk '{print "RX: "$3,$4}')
+    tx=$(iw dev $ETHERNET_INTERFACE link | grep tx | awk '{print "TX: "$3,$4}')
+  elif ip link show "$WIFI_INTERFACE" up &> /dev/null; then
+    internet=$(iw dev $WIFI_INTERFACE link | grep SSID: | awk '{print $2}')
+    rx=$(iw dev $WIFI_INTERFACE link | grep rx | awk '{print "RX: "$3,$4}')
+    tx=$(iw dev $WIFI_INTERFACE link | grep tx | awk '{print "TX: "$3,$4}')
+  else
+    internet="Disconnected"
+    rx="0 MBit/s"
+    tx="0 MBit/s"
+  fi
+  
+  cpu=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4 "%"}')
+  
+  raminfo=$(free -h | grep "Mem:")
+  totalram=$(echo "$raminfo" | awk '{print $2}')
+  usedram=$(echo "$raminfo" | awk '{print $3}')
+  ram="$usedram/$totalram"
+  
+  echo "$datetime |$battery | $internet | $rx | $tx | $cpu | $ram"
+  sleep 1
+done
