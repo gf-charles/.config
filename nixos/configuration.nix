@@ -7,7 +7,7 @@ in
 {
   imports =
     [ # Include the results of the hardware scan.
-      ./hardware-configs/x61.nix
+      ./hardware-configs/current
     ];
 
   # Nix settings
@@ -50,16 +50,12 @@ in
   '';
 
   # Fonts
-  console.font = "Lat2-Terminus16";
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-emoji
     noto-fonts-cjk-sans
     nerd-fonts.fira-code
   ];
-
-  # Networking
-  networking.hostName = "x61";
 
   # Timezone and locale
   time.timeZone = "America/Los_Angeles";
@@ -137,9 +133,7 @@ in
     iw
     acpi
     myCustomDwl
-    qutebrowser.withPackages (pythonPackages: with pythonPackages; [
-      adblock
-    ])
+    qutebrowser
     bemenu
     foot
     wbg
@@ -167,6 +161,7 @@ in
     nil
     bash-language-server
     ## devtools
+    gdb
     gnumake
     gh
     git
