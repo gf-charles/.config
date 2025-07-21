@@ -5,3 +5,6 @@ nixos/hardware-configs/current
 nixos/nixos-switch.log
 .stignore
 syncthing/
+environment.d/
+systemd/
+.stfolder/
