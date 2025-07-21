@@ -37,6 +37,7 @@ in
             procps/
             gh/
             syncthing/
+            qutebrowser/.cache/
       '';
     };
   };
