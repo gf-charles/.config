@@ -2,3 +2,6 @@ gh/
 pulse/
 procps/
 nixos/hardware-configs/current
+nixos/nixos-switch.log
+.stignore
+syncthing/
