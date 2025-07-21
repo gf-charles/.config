@@ -18,27 +18,27 @@ in
 
   home-manager.users.cgf = { pkgs, ... }: {
     home.stateVersion = "25.05";
-    # home.file = {
-    #   "/home/${config.home.username}/.stignore".text = ''
-    #     .*
-    #     usb/
-    #   '';
-    #   "/home/${config.home.username}/.config/.stignore".text = ''
-    #         emacs/.local/
-    #         #*#
-    #         *~
-    #         .#*
-    #         *.org.pdf
-    #         *.org.html
-    #         *.org.tex
-    #         *.org.txt
-    #         *.elc
-    #         pulse/
-    #         procps/
-    #         gh/
-    #         syncthing/
-    #   '';
-    # };
+    home.file = {
+      "/home/cgf/.stignore".text = ''
+        .*
+        usb/
+      '';
+      "/home/cgf/.config/.stignore".text = ''
+            emacs/.local/
+            #*#
+            *~
+            .#*
+            *.org.pdf
+            *.org.html
+            *.org.tex
+            *.org.txt
+            *.elc
+            pulse/
+            procps/
+            gh/
+            syncthing/
+      '';
+    };
   };
 
   # Keyboard layout settings
