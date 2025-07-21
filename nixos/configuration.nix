@@ -163,6 +163,7 @@ in
             "pulse/"
             "procps/"
             "gh/"
+            "syncthing/"
           ];
         };
       };
