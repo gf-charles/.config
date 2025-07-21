@@ -1,4 +1,3 @@
-# THIS IS A TEST WOOOOOOOO000
 { config, lib, pkgs, ... }:
 
 let
@@ -43,11 +42,6 @@ in
       xdg-desktop-portal-gtk 
     ];
   };
-
-  # Systemd import user environment variables
-  systemd.user.extraConfig = ''
-    DefaultEnvironment=XDG_CURRENT_DESKTOP=${config.environment.sessionVariables.XDG_CURRENT_DESKTOP}
-  '';
 
   # Fonts
   fonts.packages = with pkgs; [
@@ -123,6 +117,15 @@ in
 	user = "cgf";
       };
     };
+  };
+
+  services.syncthing = {
+    enable = true;
+    user = "cgf";
+    group = "users";
+
+    dataDir = "/home/cgf/.local/share/syncthing";
+    configDir = "/home/cgf/.config/syncthing";
   };
 
   # System packages
