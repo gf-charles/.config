@@ -2,3 +2,4 @@ binds https://raw.githubusercontent.com/qutebrowser/qutebrowser/main/doc/img/che
 yt https://www.youtube.com/
 pkg https://search.nixos.org/packages
 ai https://gemini.google.com/app
+syncthing http://127.0.0.1:8384/
