@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     owner = "gf-charles";
     repo = "dwl-v0.7";
     tag = "v1.1.0";
-    sha256 = "sha256-SMp3BbY1WrouFWOVRu9H2UtjNPUCWuh2QD0KqRofxKI=";
+    sha256 = "sha256-gYcGqvQKeRQV0NZuV9Nm3Xzw+g6Ufb5RU7unbsSkTMk=";
   };
 
   makeFlags = [
