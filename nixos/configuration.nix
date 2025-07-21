@@ -2,16 +2,43 @@
 
 let
   myCustomDwl = pkgs.callPackage ./pkgs/dwl-custom.nix { };
+  home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz;
 in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configs/current
+      (import "${home-manager}/nixos")
     ];
 
   # Nix settings
   nix = {
       settings.experimental-features = [ "nix-command" "flakes" ];
+  };
+
+  home-manager.users.cgf = { pkgs, ... }: {
+    home.stateVersion = "25.05";
+    # home.file = {
+    #   "/home/${config.home.username}/.stignore".text = ''
+    #     .*
+    #     usb/
+    #   '';
+    #   "/home/${config.home.username}/.config/.stignore".text = ''
+    #         emacs/.local/
+    #         #*#
+    #         *~
+    #         .#*
+    #         *.org.pdf
+    #         *.org.html
+    #         *.org.tex
+    #         *.org.txt
+    #         *.elc
+    #         pulse/
+    #         procps/
+    #         gh/
+    #         syncthing/
+    #   '';
+    # };
   };
 
   # Keyboard layout settings
@@ -150,21 +177,6 @@ in
         "config" = {
           path = "/home/cgf/.config/";
           devices = [ "x61" ];
-          ignorePatterns = [
-            "emacs/.local/"
-            "#*#"
-            "*~"
-            ".#*"
-            "*.org.pdf"
-            "*.org.html"
-            "*.org.tex"
-            "*.org.txt"
-            "*.elc"
-            "pulse/"
-            "procps/"
-            "gh/"
-            "syncthing/"
-          ];
         };
       };
 
