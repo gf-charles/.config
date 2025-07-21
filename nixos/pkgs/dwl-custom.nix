@@ -7,8 +7,8 @@ stdenv.mkDerivation rec {
   src = pkgs.fetchFromGitHub {
     owner = "gf-charles";
     repo = "dwl-v0.7";
-    tag = "v1.0.0";
-    sha256 = "sha256-D5b1Q0vRH9DgR2XM6429BXOzSCimzjaTkzwd231G1iY=";
+    tag = "v1.1.0";
+    sha256 = "sha256-SMp3BbY1WrouFWOVRu9H2UtjNPUCWuh2QD0KqRofxKI=";
   };
 
   makeFlags = [

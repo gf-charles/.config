@@ -1,4 +1,66 @@
 #!/usr/bin/env bash
+#!/bin/bash
+
+# Script to check if Emacs daemon is running and start it if not.
+
+# --- Configuration ---
+# Path to the Emacs executable. Adjust if Emacs is not in your PATH or is a specific version.
+EMACS_BIN="/run/current-system/sw/bin/emacs"
+
+
+# Path to the Emacs daemon socket.
+# By default, Emacs creates this in XDG_RUNTIME_DIR.
+# If you use a custom server name with --daemon=NAME, adjust this path accordingly.
+# Example for default:
+EMACS_SERVER_SOCKET="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/emacs/server"
+# Example for custom name 'my-server':
+# EMACS_SERVER_SOCKET="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/emacs/my-server"
+
+# --- Functions ---
+
+# Function to check if the Emacs daemon process is running
+is_emacs_daemon_running() {
+    # Check for the main Emacs daemon process
+    # `pgrep -f "emacs --daemon"` finds processes whose full command line matches.
+    # We also check for the existence of the server socket file, which is a more reliable indicator
+    # that the server is actually ready to accept connections.
+    if pgrep -f "emacs --daemon" > /dev/null && [ -S "$EMACS_SERVER_SOCKET" ]; then
+        return 0 # Running
+    else
+        return 1 # Not running
+    fi
+}
+
+# Function to start the Emacs daemon
+start_emacs_daemon() {
+    echo "Emacs daemon not running. Starting..."
+    # Start Emacs as a daemon in the background.
+    # `setsid` detaches it from the current terminal session.
+    # `>/dev/null 2>&1` redirects stdout and stderr to /dev/null to keep the terminal clean.
+    # `&` runs it in the background.
+    setsid "$EMACS_BIN" --daemon >/dev/null 2>&1 &
+
+    # Give it a moment to start up and create the socket
+    echo "Waiting for Emacs daemon to start..."
+    for i in {1..10}; do # Try for up to 5 seconds
+        if is_emacs_daemon_running; then
+            echo "Emacs daemon started successfully."
+            return 0
+        fi
+        sleep 0.5
+    done
+
+    echo "Error: Emacs daemon failed to start within the expected time."
+    return 1
+}
+
+# --- Main Logic ---
+
+if is_emacs_daemon_running; then
+    echo "Emacs daemon is already running."
+else
+    start_emacs_daemon
+fi
 
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
 DWL_FIFO="$XDG_RUNTIME_DIR/dwl_status_fifo"

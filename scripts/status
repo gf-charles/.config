@@ -1,6 +1,22 @@
 #!/usr/bin/env bash
 
-WIFI_INTERFACE="wls3"
+# Function to find the Wi-Fi interface
+get_wifi_interface_ip() {
+    # 'ip -o link show' lists all interfaces in one line each
+    # 'grep -E "UP.*link/ether.*wireless"' filters for interfaces that are UP and have wireless capability
+    # 'awk -F': ' '{print $2}' ' extracts the second field (the interface name)
+    # 'head -n 1' takes only the first result if multiple are found
+    local interface=$(ip -o link show | grep -E " UP " | awk -F': ' '{print $2}' | head -n 1)
+    if [ -n "$interface" ]; then
+        echo "$interface"
+        return 0
+    else
+        echo "Error: Wi-Fi interface not found using 'ip' command." >&2
+        return 1
+    fi
+}
+
+WIFI_INTERFACE=$(get_wifi_interface_ip)
 ETHERNET_INTERFACE="eth0"
 
 while true; do
