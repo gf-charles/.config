@@ -164,12 +164,15 @@ in
         "x61" = { 
           id = "KSLO2YS-6K2HU2H-S2QDCAR-LZX7WYO-YNIFHCN-LXGKMM5-BOA4DKK-MB7DMQG";
         };
+        "xps13" = {
+          id = "J5FBDRC-OWX7DYP-36FPXCJ-R4FR44S-EZJMUJG-KPVMQAB-U5SDRQ2-Y4DEBAU";
+        };
       };
 
       folders = {
         "home" = { 
           path = "/home/cgf/"; 
-          devices = [ "x61" ];
+          devices = [ "x61" "xps13" ];
           ignorePatterns = [
             ".*"
             "usb/"
@@ -177,7 +180,7 @@ in
         };
         "config" = {
           path = "/home/cgf/.config/";
-          devices = [ "x61" ];
+          devices = [ "x61" "xps13" ];
         };
       };
 
