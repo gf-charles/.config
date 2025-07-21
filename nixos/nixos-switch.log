@@ -1,105 +1,29 @@
 building Nix...
 building the system configuration...
-these 16 derivations will be built:
-  /nix/store/24q0hxmzhh9x05a2j3sk7z48rdc90n6r-source.drv
-  /nix/store/l55nb92ig6n37nq559isfyr7lbr640ac-dwl-custom-1.0.drv
-  /nix/store/pldx9wr9gw07yfza3xj8119ylxf4hp9z-system-path.drv
-  /nix/store/ilr4ff4iqvlgfs1inhq8s4alrs9z7qyx-dbus-1.drv
-  /nix/store/sx8ilx04hiaa95jg5aqv1hll95iadkhk-X-Restart-Triggers-dbus.drv
-  /nix/store/ilcp61c7lafkbyrbz8nziyx24w13mvn8-unit-dbus.service.drv
-  /nix/store/wnqz6hl447bks2v8wq3dnx902qhvcysv-vconsole.conf.drv
-  /nix/store/qff2i6902n6nqp29sg23y292fbrldcm9-X-Restart-Triggers-reload-systemd-vconsole-setup.drv
-  /nix/store/rq2vrd7n5sl17waxkwzl931510y5hwmn-unit-reload-systemd-vconsole-setup.service.drv
-  /nix/store/n82j8ynid098d261rkidmm7ikji9rzja-X-Restart-Triggers-polkit.drv
-  /nix/store/z0cf6kyzghs8p1ny4v9w4yhz1chfvn4l-unit-polkit.service.drv
-  /nix/store/v8y3m0g0w1zflrcxnb8xp9my75b90cmn-system-units.drv
-  /nix/store/vd0i3afc3ca70fzcb2ljlfyrajjv3048-unit-dbus.service.drv
-  /nix/store/zs2bmdj2y224q927sigrfrlfip73d71h-user-units.drv
-  /nix/store/k9lj0dawb54d0d6x47gvcgvp8m27nqz8-etc.drv
-  /nix/store/df9ly91n7f7jah6w61x2qd2phi90dbkz-nixos-system-x61-25.05.806668.f01fe91b0108.drv
-building '/nix/store/wnqz6hl447bks2v8wq3dnx902qhvcysv-vconsole.conf.drv'...
-building '/nix/store/24q0hxmzhh9x05a2j3sk7z48rdc90n6r-source.drv'...
-building '/nix/store/qff2i6902n6nqp29sg23y292fbrldcm9-X-Restart-Triggers-reload-systemd-vconsole-setup.drv'...
-
-trying https://github.com/gf-charles/dwl-v0.7/archive/refs/tags/v1.1.0.tar.gz
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-building '/nix/store/rq2vrd7n5sl17waxkwzl931510y5hwmn-unit-reload-systemd-vconsole-setup.service.drv'...
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 93519    0 93519    0     0   165k      0 --:--:-- --:--:-- --:--:--  165k
-unpacking source archive /build/download.tar.gz
-building '/nix/store/l55nb92ig6n37nq559isfyr7lbr640ac-dwl-custom-1.0.drv'...
-Running phase: unpackPhase
-unpacking source archive /nix/store/cnf9vs7mp2xhk15i3rn966ps17hbghnb-source
-source root is source
-Running phase: patchPhase
-Running phase: updateAutotoolsGnuConfigScriptsPhase
-Running phase: configurePhase
-no configure script, doing nothing
-Running phase: buildPhase
-build flags: SHELL=/nix/store/ih68ar79msmj0496pgld4r3vqfr7bbin-bash-5.2p37/bin/bash PREFIX=\$\(out\)
-`pkg-config --variable=wayland_scanner wayland-scanner` enum-header \
-        `pkg-config --variable=pkgdatadir wayland-protocols`/staging/cursor-shape/cursor-shape-v1.xml cursor-shape-v1-protocol.h
-`pkg-config --variable=wayland_scanner wayland-scanner` enum-header \
-        `pkg-config --variable=pkgdatadir wayland-protocols`/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml pointer-constraints-unstable-v1-protocol.h
-`pkg-config --variable=wayland_scanner wayland-scanner` enum-header \
-        protocols/wlr-layer-shell-unstable-v1.xml wlr-layer-shell-unstable-v1-protocol.h
-`pkg-config --variable=wayland_scanner wayland-scanner` server-header \
-        protocols/wlr-output-power-management-unstable-v1.xml wlr-output-power-management-unstable-v1-protocol.h
-`pkg-config --variable=wayland_scanner wayland-scanner` server-header \
-        `pkg-config --variable=pkgdatadir wayland-protocols`/stable/xdg-shell/xdg-shell.xml xdg-shell-protocol.h
-gcc  `pkg-config --cflags wlroots-0.18 wayland-server xkbcommon libinput pixman-1 fcft ` -I. -DWLR_USE_UNSTABLE -D_POSIX_C_SOURCE=200809L  -DVERSION=\"`git describe --tags --dirty 2>/dev/null || echo 0.7`\"  -g -pedantic -Wall -Wextra -Wdeclaration-after-statement  -Wno-unused-parameter -Wshadow -Wunused-macros -Werror=strict-prototypes  -Werror=implicit -Werror=return-type -Werror=incompatible-pointer-types  -Wfloat-conversion -O1 -o dwl.o -c dwl.c
-In file included from dwl.c:73:
-drwl.h: In function 'drwl_init':
-drwl.h:84:9: warning: 'fcft_set_scaling_filter' is deprecated [-Wdeprecated-declarations]
-   84 |         fcft_set_scaling_filter(FCFT_SCALING_FILTER_LANCZOS3);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~
-In file included from drwl.h:33:
-/nix/store/v9kikqlrxx77y9nir7ja2xd6gm1nig9q-fcft-3.3.1/include/fcft/fcft.h:190:6: note: declared here
-  190 | bool fcft_set_scaling_filter(enum fcft_scaling_filter filter) FCFT_DEPRECATED;
-      |      ^~~~~~~~~~~~~~~~~~~~~~~
-dwl.c: In function 'parentpid':
-dwl.c:2371:9: warning: ignoring return value of 'fscanf' declared with attribute 'warn_unused_result' [-Wunused-result]
- 2371 |         fscanf(f, "%*u %*s %*c %u", &v);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-gcc  `pkg-config --cflags wlroots-0.18 wayland-server xkbcommon libinput pixman-1 fcft ` -I. -DWLR_USE_UNSTABLE -D_POSIX_C_SOURCE=200809L  -DVERSION=\"`git describe --tags --dirty 2>/dev/null || echo 0.7`\"  -g -pedantic -Wall -Wextra -Wdeclaration-after-statement  -Wno-unused-parameter -Wshadow -Wunused-macros -Werror=strict-prototypes  -Werror=implicit -Werror=return-type -Werror=incompatible-pointer-types  -Wfloat-conversion -O1 -o util.o -c util.c
-gcc dwl.o util.o `pkg-config --cflags wlroots-0.18 wayland-server xkbcommon libinput pixman-1 fcft ` -I. -DWLR_USE_UNSTABLE -D_POSIX_C_SOURCE=200809L  -DVERSION=\"`git describe --tags --dirty 2>/dev/null || echo 0.7`\"  -g -pedantic -Wall -Wextra -Wdeclaration-after-statement  -Wno-unused-parameter -Wshadow -Wunused-macros -Werror=strict-prototypes  -Werror=implicit -Werror=return-type -Werror=incompatible-pointer-types  -Wfloat-conversion -O1  `pkg-config --libs wlroots-0.18 wayland-server xkbcommon libinput pixman-1 fcft ` -lm  -o dwl
-Running phase: installPhase
-install flags: SHELL=/nix/store/ih68ar79msmj0496pgld4r3vqfr7bbin-bash-5.2p37/bin/bash PREFIX=\$\(out\) install
-mkdir -p /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/bin
-cp -f dwl /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/bin
-chmod 755 /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/bin/dwl
-mkdir -p /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/share/man/man1
-cp -f dwl.1 /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/share/man/man1
-chmod 644 /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/share/man/man1/dwl.1
-mkdir -p /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/share/wayland-sessions
-cp -f dwl.desktop /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/share/wayland-sessions/dwl.desktop
-chmod 644 /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/share/wayland-sessions/dwl.desktop
-Running phase: fixupPhase
-shrinking RPATHs of ELF executables and libraries in /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0
-shrinking /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/bin/dwl
-checking for references to /build/ in /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0...
-gzipping man pages under /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/share/man/
-patching script interpreter paths in /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0
-stripping (with command strip and flags -S -p) in  /nix/store/nf6khgv7s99pyfsjgl6jwhk1afxr42y7-dwl-custom-1.0/bin
-building '/nix/store/pldx9wr9gw07yfza3xj8119ylxf4hp9z-system-path.drv'...
-created 10237 symlinks in user environment
-building '/nix/store/n82j8ynid098d261rkidmm7ikji9rzja-X-Restart-Triggers-polkit.drv'...
-building '/nix/store/ilr4ff4iqvlgfs1inhq8s4alrs9z7qyx-dbus-1.drv'...
-building '/nix/store/z0cf6kyzghs8p1ny4v9w4yhz1chfvn4l-unit-polkit.service.drv'...
-building '/nix/store/sx8ilx04hiaa95jg5aqv1hll95iadkhk-X-Restart-Triggers-dbus.drv'...
-building '/nix/store/ilcp61c7lafkbyrbz8nziyx24w13mvn8-unit-dbus.service.drv'...
-building '/nix/store/vd0i3afc3ca70fzcb2ljlfyrajjv3048-unit-dbus.service.drv'...
-building '/nix/store/v8y3m0g0w1zflrcxnb8xp9my75b90cmn-system-units.drv'...
-building '/nix/store/zs2bmdj2y224q927sigrfrlfip73d71h-user-units.drv'...
-building '/nix/store/k9lj0dawb54d0d6x47gvcgvp8m27nqz8-etc.drv'...
-building '/nix/store/df9ly91n7f7jah6w61x2qd2phi90dbkz-nixos-system-x61-25.05.806668.f01fe91b0108.drv'...
+these 9 derivations will be built:
+  /nix/store/mafb8hfrj55mh8ybasahc33jcw1wy2h1-sshd.conf-settings.drv
+  /nix/store/awwfgx2mi9vm4kgycli3ziq333z7camw-sshd.conf-final.drv
+  /nix/store/icm7qq98q5r0k61i7407fbdpb697jvmp-X-Restart-Triggers-sshd.drv
+  /nix/store/dqg09960x17616a7xm01dlzi232igwwi-unit-sshd.service.drv
+  /nix/store/0iynpys75y2h6jj6p8k88r764lgr0p9j-system-units.drv
+  /nix/store/704yyilnccbrbrwzzdvsyhaan1pnzgx3-sshd.pam.drv
+  /nix/store/9d1z6c1xmf0457smv98lb1n0y2h9n8zg-check-sshd-config.drv
+  /nix/store/y4mrrhlgfw9kyl39c17k4cr58pdwn0gy-etc.drv
+  /nix/store/zpvdvn8ncl6305186jx3zyygfrid1xnd-nixos-system-x61-25.05.806668.f01fe91b0108.drv
+building '/nix/store/704yyilnccbrbrwzzdvsyhaan1pnzgx3-sshd.pam.drv'...
+building '/nix/store/mafb8hfrj55mh8ybasahc33jcw1wy2h1-sshd.conf-settings.drv'...
+building '/nix/store/awwfgx2mi9vm4kgycli3ziq333z7camw-sshd.conf-final.drv'...
+building '/nix/store/icm7qq98q5r0k61i7407fbdpb697jvmp-X-Restart-Triggers-sshd.drv'...
+building '/nix/store/9d1z6c1xmf0457smv98lb1n0y2h9n8zg-check-sshd-config.drv'...
+building '/nix/store/dqg09960x17616a7xm01dlzi232igwwi-unit-sshd.service.drv'...
+building '/nix/store/0iynpys75y2h6jj6p8k88r764lgr0p9j-system-units.drv'...
+building '/nix/store/y4mrrhlgfw9kyl39c17k4cr58pdwn0gy-etc.drv'...
+building '/nix/store/zpvdvn8ncl6305186jx3zyygfrid1xnd-nixos-system-x61-25.05.806668.f01fe91b0108.drv'...
 updating GRUB 2 menu...
 activating the configuration...
 setting up /etc...
 reloading user units for cgf...
 restarting sysinit-reactivation.target
-reloading the following units: dbus.service, reload-systemd-vconsole-setup.service
-restarting the following units: polkit.service
-the following new units were started: NetworkManager-dispatcher.service, sysinit-reactivation.target, systemd-tmpfiles-resetup.service
-Done. The new configuration is /nix/store/2i3xh551hh0psbj8jdzjg37yw1dvpx2c-nixos-system-x61-25.05.806668.f01fe91b0108
+restarting the following units: sshd.service
+the following new units were started: NetworkManager-dispatcher.service
+Done. The new configuration is /nix/store/0yiq1q6gsdzjw3xw14jbwj9wvvx09br8-nixos-system-x61-25.05.806668.f01fe91b0108
