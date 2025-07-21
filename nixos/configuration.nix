@@ -139,6 +139,8 @@ in
     wbg
     wl-clipboard
     emacs-pgtk
+    grim
+    slurp
     ## terminal-based
     wget
     neovim

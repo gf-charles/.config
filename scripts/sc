@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# Script to take a screenshot of a selected area on Wayland (dwl).
+# Requires grim, slurp, and wl-copy (from wl-clipboard).
+
+# --- Configuration ---
+# Directory to save screenshots
+SCREENSHOT_DIR="${XDG_PICTURES_DIR:-$HOME/media/pics}/screenshots"
+# You might need to create this directory if it doesn't exist
+mkdir -p "$SCREENSHOT_DIR" # Uncomment if you want the script to create it
+
+# --- Check for dependencies ---
+command -v grim >/dev/null || { echo "Error: 'grim' not found. Please install it."; exit 1; }
+command -v slurp >/dev/null || { echo "Error: 'slurp' not found. Please install it."; exit 1; }
+command -v wl-copy >/dev/null || { echo "Error: 'wl-copy' not found. Please install 'wl-clipboard'."; exit 1; }
+
+# --- Create screenshot directory if it doesn't exist ---
+mkdir -p "$SCREENSHOT_DIR" || { echo "Error: Could not create screenshot directory: $SCREENSHOT_DIR"; exit 1; }
+
+# --- Generate filename with timestamp ---
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+SCREENSHOT_FILENAME="screenshot_${TIMESTAMP}.png"
+SCREENSHOT_PATH="$SCREENSHOT_DIR/$SCREENSHOT_FILENAME"
+
+# --- Take the screenshot ---
+# Use slurp to select the region, then pipe its output to grim
+# grim -g "$(slurp)" saves the selected area.
+# You can add -l to grim for a less aggressive grab if needed, but not usually for interactive.
+echo "Select an area to screenshot with your mouse..."
+if ! grim -g "$(slurp)" "$SCREENSHOT_PATH"; then
+    echo "Screenshot selection cancelled or failed."
+    rm -f "$SCREENSHOT_PATH" # Clean up empty file if grim failed
+    exit 1
+fi
+
+# --- Copy to clipboard ---
+if wl-copy < "$SCREENSHOT_PATH"; then
+    echo "Screenshot saved to: $SCREENSHOT_PATH"
+    echo "Screenshot copied to clipboard."
+else
+    echo "Error: Failed to copy screenshot to clipboard."
+fi
+
+exit 0
