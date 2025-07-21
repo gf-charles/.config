@@ -157,6 +157,7 @@ in
     pass
     gnupg
     pinentry
+    pstree
     ### audio
     pulseaudio
     pamixer
