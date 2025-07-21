@@ -126,6 +126,51 @@ in
 
     dataDir = "/home/cgf/.local/share/syncthing";
     configDir = "/home/cgf/.config/syncthing";
+
+    openDefaultPorts = true; # Opens 8384 (GUI), 22000 (sync), 21027 (discovery)
+    overrideDevices = true;
+    overrideFolders = true;
+
+    settings = {
+      devices = {
+        "x61" = { 
+          id = "KSLO2YS-6K2HU2H-S2QDCAR-LZX7WYO-YNIFHCN-LXGKMM5-BOA4DKK-MB7DMQG";
+        };
+      };
+
+      folders = {
+        "home" = { 
+          path = "/home/cgf/"; 
+          devices = [ "x61" ];
+          ignorePatterns = [
+            ".*"
+            "usb/"
+          ];
+        };
+        "config" = {
+          path = "/home/cgf/.config/";
+          devices = [ "x61" ];
+          ignorePatterns = [
+            "emacs/.local/"
+            "#*#"
+            "*~"
+            ".#*"
+            "*.org.pdf"
+            "*.org.html"
+            "*.org.tex"
+            "*.org.txt"
+            "*.elc"
+            "pulse/"
+            "procps/"
+            "gh/"
+          ];
+        };
+      };
+
+      options = {
+        startBrowser = false; # Prevent Syncthing from opening browser on startup
+      };
+    };
   };
 
   # System packages
