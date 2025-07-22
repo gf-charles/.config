@@ -38,6 +38,8 @@ in
             gh/
             syncthing/
             qutebrowser/.cache/
+            nixos/hardware-configs/current
+            nixos/nixos-switch.log
       '';
     };
   };
@@ -95,6 +97,10 @@ in
   
   # Sudo support
   security.sudo.enable = true;
+  security.sudo.extraConfig = ''
+    # Allow 'your_username' to run btrfs subvolume snapshot without password
+    ${config.users.users.cgf.name} ALL=(ALL) NOPASSWD: ${pkgs.btrfs-progs}/bin/btrfs subvolume snapshot *
+  '';
 
   # Pick Kernel
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -221,6 +227,7 @@ in
     pinentry
     pstree
     tree
+    stc-cli
     ### audio
     pulseaudio
     pamixer
