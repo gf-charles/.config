@@ -260,6 +260,7 @@ in
     tree
     stc-cli
     jq
+    mpv
 
     # Zsh
     zsh
