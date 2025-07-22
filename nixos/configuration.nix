@@ -196,6 +196,15 @@ in
     };
   };
 
+  # Sound
+  services.pulseaudio.enable = false;
+  services.pipewire = {
+    enable = true;
+    pulse.enable = true;
+    alsa.enable = true;
+    jack.enable = true;
+  };
+
   # System packages
   environment.systemPackages = with pkgs; [
     # System
@@ -207,37 +216,16 @@ in
     pciutils
 
     # Applications
-    ## compositor applications
-    iw
-    acpi
-    myCustomDwl
-    qutebrowser
-    bemenu
-    foot
-    wbg
-    wl-clipboard
-    emacs-pgtk
-    grim
-    slurp
-    ## terminal-based
-    wget
-    neovim
-    pass
-    gnupg
-    pinentry
-    pstree
-    tree
-    stc-cli
-    ### audio
+    ## audio
     pulseaudio
     pamixer
-    ### emacs
+    ## emacs
     ripgrep
     fd
     sqlite
     graphviz
     texliveMedium
-    ### lsp
+    ## lsp
     pyright
     clang
     clang-tools
@@ -250,6 +238,28 @@ in
     git
     cmake
     libtool
+    ## compositor applications
+    qutebrowser
+    bemenu
+    foot
+    wbg
+    wl-clipboard
+    emacs-pgtk
+    grim
+    slurp
+    ## terminal-based
+    iw
+    acpi
+    myCustomDwl
+    wget
+    neovim
+    pass
+    gnupg
+    pinentry
+    pstree
+    tree
+    stc-cli
+    jq
 
     # Zsh
     zsh
@@ -258,16 +268,6 @@ in
     starship
 
   ];
-
-  # Sound
-  services.pulseaudio.enable = false;
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-    alsa.enable = true;
-    jack.enable = true;
-  };
-
   system.stateVersion = "25.05"; # Did you read the comment?
 }
 
