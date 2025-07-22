@@ -70,7 +70,7 @@ if [ ! -p "$DWL_FIFO" ]; then
     mkfifo -m 600 "$DWL_FIFO"
 fi
 
-status > "$DWL_FIFO" 2>/dev/null &
+status > "$DWL_FIFO" 2>/tmp/status_err &
 STATUS_PID=$!
 
 dwl < "$DWL_FIFO" &

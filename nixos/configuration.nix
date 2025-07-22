@@ -16,6 +16,7 @@ in
       settings.experimental-features = [ "nix-command" "flakes" ];
   };
 
+  # put the right .stignore files
   home-manager.users.cgf = { pkgs, ... }: {
     home.stateVersion = "25.05";
     home.file = {
@@ -153,6 +154,7 @@ in
     };
   };
 
+  # syncthing
   services.syncthing = {
     enable = true;
     user = "cgf";
@@ -203,6 +205,12 @@ in
     pulse.enable = true;
     alsa.enable = true;
     jack.enable = true;
+  };
+
+  # bluetooth
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
   };
 
   # System packages
