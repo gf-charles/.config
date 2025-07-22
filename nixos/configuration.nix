@@ -270,6 +270,7 @@ in
     jq
     mpv
     screenfetch
+    spotify-player
 
     # Zsh
     zsh
