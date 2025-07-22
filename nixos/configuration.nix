@@ -261,6 +261,7 @@ in
     stc-cli
     jq
     mpv
+    screenfetch
 
     # Zsh
     zsh

@@ -1,19 +1,6 @@
 from qutebrowser.api import interceptor
 config.load_autoconfig()
 
-# Youtube ad blocking
-def filter_yt(info: interceptor.Request):
-    """Block the given request if necessary"""
-    url = info.request_url
-    if (
-            url.host() == "www.youtube.com"
-            and url.path() == "/get_video_info"
-            and "&adformat=" in url.query()
-    ):
-        info.block()
-
-interceptor.register(filter_yt)
-
 c.colors.webpage.darkmode.enabled = True
 c.colors.webpage.preferred_color_scheme = 'dark'
 c.tabs.position = "left"
@@ -46,3 +33,6 @@ config.bind('<super-0>', 'tab-focus -1') # -1 means the last tab
 config.set('qt.args', [
     'enable-features=WebRTCPipeWireCapturer',
 ])
+
+# Temporarily modify for debugging:
+config.bind('ym', 'hint links spawn sh -c "mpv --no-terminal --log-file=/tmp/mpv_debug.log --msg-level=all=v \\"{hint-url}\\" &"')
