@@ -13,7 +13,17 @@
 
   # Driver
   services.xserver.videoDrivers = [ "intel" ];
-  hardware.graphics.enable = true;
+  hardware.graphics = {
+    enable = true;
+    # For Intel graphics, ensure Mesa drivers are available for OpenGL/Vulkan.
+    # 'mesa.drivers' typically includes the Intel i965/iris drivers and Vulkan support.
+    extraPackages = with pkgs; [
+      mesa
+      vulkan-loader # Essential Vulkan runtime library
+      # Optional: vulkan-tools for testing Vulkan setup (e.g., `vulkaninfo`)
+      vulkan-tools
+    ];
+  };
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ "btrfs" "dm-crypt" "nvme" ];

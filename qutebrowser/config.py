@@ -34,5 +34,4 @@ config.set('qt.args', [
     'enable-features=WebRTCPipeWireCapturer',
 ])
 
-# Temporarily modify for debugging:
-config.bind('ym', 'hint links spawn sh -c "mpv --no-terminal --log-file=/tmp/mpv_debug.log --msg-level=all=v \\"{hint-url}\\" &"')
+config.bind('ym', 'hint links spawn sh -c "mpv --no-terminal --fullscreen --log-file=/tmp/mpv_debug.log --msg-level=all=v \\"{hint-url}\\" &"')
