@@ -1,0 +1,198 @@
+#!/usr/bin/env bash
+#
+# Shutdown Script for NixOS with Syncthing Sync, Git Push, Btrfs Snapshot, and Home Archive
+#
+# This script performs the following actions before shutting down:
+# 1. Ensures specified Syncthing folders are up-to-date.
+# 2. Stages, commits, and pushes changes in the ~/.config Git repository.
+# 3. Creates a read-only Btrfs snapshot of the root filesystem.
+# 4. Creates a tar.gz archive of non-hidden files in the home directory.
+# 5. Copies the archive to a remote server via SCP.
+# 6. Initiates system poweroff.
+
+# --- CONFIGURATION ---
+# Replace with your actual values
+SYNCTHING_GUI_PORT="8384"
+SYNCTHING_API_KEY="KfZ5n3XonuVw3S6VVoCA7JHGQajZZmaZ" # Get this from Syncthing GUI -> Actions -> Settings -> GUI
+SYNCTHING_FOLDER_IDS=(
+  "home" # e.g., "default" or a generated ID
+  "config" # e.g., "another-folder-id"
+)
+SYNCTHING_CHECK_TIMEOUT=300 # Max seconds to wait for Syncthing sync (5 minutes)
+SYNCTHING_CHECK_INTERVAL=5  # Seconds between Syncthing status checks
+
+GIT_CONFIG_REPO="$HOME/.config" # Path to your Git repository (e.g., your dotfiles)
+GIT_BRANCH="master"               # Your main branch name (e.g., main, master)
+
+HOME_SUBVOLUME_PATH="/home"
+BTRFS_ROOT_PATH=""             # The mount point of your root Btrfs subvolume
+SNAPSHOT_DIR=".snapshots"      # Directory where snapshots are stored (must be on the same Btrfs filesystem)
+
+HOME_ARCHIVE_TEMP_DIR="/tmp"    # Temporary directory for the home archive
+SSH_USER="root"        # SSH username for the remote server
+SSH_SERVER="192.3.36.79" # Remote server hostname or IP
+SSH_DEST_PATH="backups/" # Destination directory on the remote server
+
+# Exclude patterns for tar.gz archive.
+# This aims to exclude common large/sensitive hidden directories, but include dotfiles like .bashrc.
+# Adjust as needed.
+TAR_EXCLUDE_PATTERNS=(
+  ".*" # Exclude the .git directory if it's not the root of the repo (e.g., if home is a repo)
+)
+
+# --- SCRIPT START ---
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Function to log messages
+log() {
+  echo "$(date '+%Y-%m-%d %H:%M:%S') - $1"
+}
+
+log_error() {
+  echo "$(date '+%Y-%m-%d %H:%M:%S') - ERROR: $1" >&2
+}
+
+# Trap for cleanup on exit (even if script fails)
+cleanup() {
+  log "Cleaning up temporary files..."
+  rm -f "$HOME_ARCHIVE_TEMP_DIR/home_backup_*.tar.gz"
+  log "Cleanup complete."
+}
+trap cleanup EXIT
+
+# --- 1. Ensure Syncthing is Synced ---
+log "Checking Syncthing status..."
+syncthing_synced=false
+start_time=$(date +%s)
+
+for folder_id in "${SYNCTHING_FOLDER_IDS[@]}"; do
+  log "  Checking folder: $folder_id"
+  # Request a scan first to ensure it's actively looking for changes
+  curl -s -X POST -H "X-API-Key: $SYNCTHING_API_KEY" "http://localhost:$SYNCTHING_GUI_PORT/rest/db/scan?folder=$folder_id" > /dev/null
+done
+
+while [ $(( $(date +%s) - start_time )) -lt "$SYNCTHING_CHECK_TIMEOUT" ]; do
+  all_folders_synced=true
+  for folder_id in "${SYNCTHING_FOLDER_IDS[@]}"; do
+    status_json=$(curl -s -H "X-API-Key: $SYNCTHING_API_KEY" "http://localhost:$SYNCTHING_GUI_PORT/rest/db/completion?folder=$folder_id")
+
+    # Check if curl command was successful and returned valid JSON
+    if [ $? -ne 0 ] || [ -z "$status_json" ]; then
+      log_error "Failed to get Syncthing status for folder $folder_id. Is Syncthing running and API key correct?"
+      all_folders_synced=false
+      break # Exit inner loop, try again after interval
+    fi
+
+    # Use jq to parse and check status. Check for completion=100 and state="idle"
+    # Note: Syncthing's /rest/db/completion endpoint returns 'completion' and 'needBytes'.
+    # For overall folder state, /rest/db/status is better, but completion is often sufficient.
+    # Let's use /rest/db/status for a more robust check.
+    folder_status_json=$(curl -s -H "X-API-Key: $SYNCTHING_API_KEY" "http://localhost:$SYNCTHING_GUI_PORT/rest/db/status?folder=$folder_id")
+
+    if [ $? -ne 0 ] || [ -z "$folder_status_json" ]; then
+      log_error "Failed to get detailed Syncthing status for folder $folder_id. Retrying..."
+      all_folders_synced=false
+      break
+    fi
+
+    local_bytes=$(echo "$folder_status_json" | jq -r '.localBytes')
+    global_bytes=$(echo "$folder_status_json" | jq -r '.globalBytes')
+    state=$(echo "$folder_status_json" | jq -r '.state')
+    need_bytes=$(echo "$folder_status_json" | jq -r '.needBytes')
+
+    if [[ "$state" == "idle" && "$need_bytes" == "0" ]]; then
+      log "  Folder '$folder_id' is Up to Date."
+    else
+      log "  Folder '$folder_id' is NOT Up to Date (State: $state, Need: $need_bytes bytes)."
+      all_folders_synced=false
+    fi
+  done
+
+  if "$all_folders_synced"; then
+    log "All Syncthing folders are Up to Date."
+    syncthing_synced=true
+    break
+  else
+    log "Waiting for Syncthing to sync... ($(( $(date +%s) - start_time ))s / $SYNCTHING_CHECK_TIMEOUTs)"
+    sleep "$SYNCTHING_CHECK_INTERVAL"
+  fi
+done
+
+if ! "$syncthing_synced"; then
+  log_error "Syncthing folders did not sync within the timeout. Proceeding with other steps, but sync might be incomplete."
+fi
+
+# --- 2. Git Push ~/.config ---
+log "Processing Git repository: $GIT_CONFIG_REPO"
+if [ -d "$GIT_CONFIG_REPO/.git" ]; then
+  cd "$GIT_CONFIG_REPO" || { log_error "Failed to change directory to $GIT_CONFIG_REPO"; exit 1; }
+
+  # Check if there are any changes (staged or unstaged)
+  if ! git diff-index --quiet HEAD -- || ! git diff-files --quiet; then
+    log "  Staging and committing changes..."
+    git add .
+    git commit -m "Automated shutdown commit: $(date '+%Y-%m-%d %H:%M:%S')" || log "  No new changes to commit."
+  else
+    log "  No local changes in $GIT_CONFIG_REPO to commit."
+  fi
+
+  log "  Pushing changes to origin/$GIT_BRANCH..."
+  if git push origin "$GIT_BRANCH"; then
+    log "  Git push successful."
+  else
+    log_error "Git push failed for $GIT_CONFIG_REPO. Check network or SSH keys."
+  fi
+  cd - > /dev/null # Go back to original directory
+else
+  log "  $GIT_CONFIG_REPO is not a Git repository. Skipping Git push."
+fi
+
+# --- 3. Create Btrfs Snapshot ---
+log "Creating Btrfs snapshot of $BTRFS_ROOT_PATH..."
+SNAPSHOT_NAME="nixos_root_$(date +%Y%m%d%H%M%S)"
+# Ensure snapshot directory exists
+sudo mkdir -p "$BTRFS_ROOT_PATH/$SNAPSHOT_DIR" || log_error "Failed to create snapshot directory $BTRFS_ROOT_PATH/$SNAPSHOT_DIR"
+
+if sudo btrfs subvolume snapshot -r "$HOME_SUBVOLUME_PATH" "$BTRFS_ROOT_PATH/$SNAPSHOT_DIR/$SNAPSHOT_NAME"; then
+  log "Btrfs snapshot '$SNAPSHOT_NAME' created successfully at $BTRFS_ROOT_PATH/$SNAPSHOT_DIR/$SNAPSHOT_NAME."
+else
+  log_error "Failed to create Btrfs snapshot for $HOME_SUBVOLUME_PATH. Check permissions or Btrfs setup."
+fi
+
+# --- 4. Create Archive of Home Directory (Non-Hidden Files) ---
+log "Creating archive of home directory ($HOME)..."
+ARCHIVE_FILENAME="home_backup_$(date +%Y%m%d%H%M%S).tar.gz"
+ARCHIVE_PATH="$HOME_ARCHIVE_TEMP_DIR/$ARCHIVE_FILENAME"
+
+tar_exclude_args=""
+for pattern in "${TAR_EXCLUDE_PATTERNS[@]}"; do
+  tar_exclude_args+=" --exclude='$pattern'"
+done
+
+# Execute tar command. Using eval to correctly expand exclude patterns.
+# This assumes $HOME is /home/cgf.
+if eval "tar -czf \"$ARCHIVE_PATH\" -C \"$HOME\" $tar_exclude_args ."; then
+  log "Home directory archive created at $ARCHIVE_PATH."
+else
+  log_error "Failed to create home directory archive."
+  # If archive creation fails, we can't proceed with SCP, but other steps might still run.
+fi
+
+# --- 5. Copy Archive over SSH ---
+if [ -f "$ARCHIVE_PATH" ]; then
+  log "Copying archive to remote server via SSH..."
+  if scp "$ARCHIVE_PATH" "$SSH_USER@$SSH_SERVER:$SSH_DEST_PATH"; then
+    log "Archive successfully copied to $SSH_SERVER:$SSH_DEST_PATH."
+  else
+    log_error "Failed to copy archive to remote server. Check SSH connection, permissions, or destination path."
+  fi
+else
+  log "Skipping SSH copy: Home archive was not created."
+fi
+
+# --- 6. Initiate System Poweroff ---
+log "All pre-shutdown tasks completed. Initiating system poweroff in 10 seconds..."
+sleep 10
+sudo systemctl poweroff

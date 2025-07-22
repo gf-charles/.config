@@ -99,7 +99,7 @@ in
   security.sudo.enable = true;
   security.sudo.extraConfig = ''
     # Allow 'your_username' to run btrfs subvolume snapshot without password
-    ${config.users.users.cgf.name} ALL=(ALL) NOPASSWD: ${pkgs.btrfs-progs}/bin/btrfs subvolume snapshot *
+    ${config.users.users.cgf.name} ALL=(ALL) NOPASSWD: /run/current-system/sw/bin/btrfs subvolume snapshot *
   '';
 
   # Pick Kernel
