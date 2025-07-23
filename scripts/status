@@ -44,7 +44,11 @@ while true; do
   totalram=$(echo "$raminfo" | awk '{print $2}')
   usedram=$(echo "$raminfo" | awk '{print $3}')
   ram="$usedram/$totalram"
+
+  cputemp=$(sensors | grep CPU | awk '{print $2}')
+
+  volume=$(pamixer --get-volume)
   
-  echo "$datetime |$battery | $internet | $rx | $tx | $cpu | $ram"
+  echo "$datetime |$battery | $internet | $rx | $tx | $cpu | $ram | $cputemp | $volume"
   sleep 1
 done

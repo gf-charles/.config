@@ -271,6 +271,7 @@ in
     mpv
     screenfetch
     spotify-player
+    lm_sensors
 
     # Zsh
     zsh
