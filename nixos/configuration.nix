@@ -175,12 +175,15 @@ in
         "xps13" = {
           id = "J5FBDRC-OWX7DYP-36FPXCJ-R4FR44S-EZJMUJG-KPVMQAB-U5SDRQ2-Y4DEBAU";
         };
+        "s20fe" = {
+          id = " L7DB5KL-2UERQPD-H6JEYHG-Q5M36MF-3KUE543-YKWCVXY-AIRS3WL-GBDFDAJ";
+        };
       };
 
       folders = {
         "home" = { 
           path = "/home/cgf/"; 
-          devices = [ "x61" "xps13" ];
+          devices = [ "x61" "xps13" "s20fe" ];
           ignorePatterns = [
             ".*"
             "usb/"

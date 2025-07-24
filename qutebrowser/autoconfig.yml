@@ -19,5 +19,7 @@ settings:
     https://discord.com: true
   content.notifications.enabled:
     https://www.youtube.com: false
+  content.register_protocol_handler:
+    https://outlook.live.com?mailtouri=%25s: true
   tabs.show:
     global: always
